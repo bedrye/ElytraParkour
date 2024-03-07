@@ -1,19 +1,24 @@
 package me.bedrye.parkourgame;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-import javax.naming.ContextNotEmptyException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin;
 
 public class Map {
     private String mapName;
-    private ArrayList<SpawnPoint> spawnPoints = new ArrayList<>();
+    private final ArrayList<SpawnPoint> spawnPoints = new ArrayList<>();
     private Location lobby;
     public Map(String string, Location loc){
         mapName = string;
         lobby = loc;
     }
-    public void removeSpawnPoint(int i) throws  Exception{
+    public void removeSpawnPoint(int i) throws IndexOutOfBoundsException{
         if (0 <= i && i < spawnPoints.size()) {
             spawnPoints.remove(i);
         }
@@ -48,6 +53,30 @@ public class Map {
     public void setLobby(Location lobby) {
         this.lobby = lobby;
     }
+
+    public Location getLobby() {
+        return lobby;
+    }
+    protected void writeToYML(int a) throws IOException {
+        File userfile = new File(getProvidingPlugin(ParkourGame.class).getDataFolder()+File.separator+"Maps"+File.separator+a+"-"+mapName+".yml");
+        FileConfiguration mapConfig = YamlConfiguration.loadConfiguration(userfile);
+        mapConfig.set("saved.name",mapName);
+        mapConfig.set("saved.lobby.x",lobby.getX());
+        mapConfig.set("saved.lobby.y",lobby.getY());
+        mapConfig.set("saved.lobby.z",lobby.getZ());
+        mapConfig.set("saved.lobby.world",lobby.getWorld().getName());
+        for (int i =0;i<spawnPoints.size();i++) {
+            mapConfig.set("saved.spawns."+i+".x",spawnPoints.get(i).getLocation().getX());
+            mapConfig.set("saved.spawns."+i+".y",spawnPoints.get(i).getLocation().getY());
+            mapConfig.set("saved.spawns."+i+".z",spawnPoints.get(i).getLocation().getZ());
+            mapConfig.set("saved.spawns."+i+".world",spawnPoints.get(i).getLocation().getWorld().getName());
+
+        }
+        mapConfig.save(userfile);
+
+
+    }
+
     @Override
     public String toString(){
         StringBuilder temp = new StringBuilder(mapName +

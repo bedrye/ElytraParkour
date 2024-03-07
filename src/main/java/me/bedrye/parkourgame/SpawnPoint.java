@@ -7,7 +7,7 @@ public class SpawnPoint {
     SpawnPoint(Location loc){
         location=loc;
     }
-    private Location location;
+    private final Location location;
     public Location getLocation(){
         return location;
     }

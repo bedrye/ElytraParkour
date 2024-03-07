@@ -7,7 +7,7 @@ public final class ParkourGame extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getServer().getPluginCommand("EP").setExecutor(new Commands());
+        Bukkit.getServer().getPluginCommand("EP").setExecutor(new CommandManager());
 
     }
 

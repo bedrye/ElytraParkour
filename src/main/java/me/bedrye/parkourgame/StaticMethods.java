@@ -3,11 +3,16 @@ package me.bedrye.parkourgame;
 import org.bukkit.entity.Player;
 
 import javax.naming.ContextNotEmptyException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin;
+
 public class StaticMethods {
+    private StaticMethods(){}
     private static final Map<Player, me.bedrye.parkourgame.Map> tempMaps = new HashMap<>();
     private static final Map<Player, Session> sessions = new HashMap<>();
     private static final ArrayList<me.bedrye.parkourgame.Map> maps = new ArrayList<>();
@@ -26,29 +31,31 @@ public class StaticMethods {
         return false;
 
     }
-    public static boolean addSession(Player p, Session  m){
+    public static void addSession(Player p, Session  m) throws  Exception{
         if (!sessions.containsKey(p)) {
             sessions.put(p, m);
-            return true;
+            return ;
         }
-        return false;
+        throw new Exception("You are not editing any map removeSpawnPointEX2");
     }
-    public static boolean removeSession(Player p) {
+    public static void removeSession(Player p) throws  ContextNotEmptyException {
         if (sessions.containsKey(p)) {
             sessions.remove(p);
-            return true;
+            return ;
         }
-        return false;
+        throw new ContextNotEmptyException("You are not editing any map removeSpawnPointEX2");
 
     }
     public static boolean isInSession(Player p){
         return sessions.containsKey(p);
 
     }
-    public static boolean saveMap(Player p){
+    public static boolean saveMap(Player p) throws Exception{
         if (tempMaps.containsKey(p)) {
+            tempMaps.get(p).writeToYML(maps.size());
             maps.add(tempMaps.get(p));
             tempMaps.remove(p);
+
             return false;
         }
         return true;
@@ -65,7 +72,14 @@ public class StaticMethods {
     public static void deleteMap(int a) throws Exception{
         if (a<0||a>=maps.size())
             throw new IndexOutOfBoundsException("Index is out of bounds deleteMapEX2");
+        if (new File(getProvidingPlugin(ParkourGame.class).getDataFolder()
+                +File.separator+"Maps"+File.separator+a+"-"+maps.get(a).getMapName()+".yml")
+                .delete())
         maps.remove(a);
+        else {
+            throw new FileNotFoundException("Couldn't find the file of map");
+        }
+
 
     }
     public static void addSpawnPoint(Player p )throws Exception{

@@ -23,6 +23,8 @@ public class Session {
     public void resetPlayer(){
         player.teleport(map.getSpawnPoint(spawnPointNumber).getLocation());
     }
-
+    public void fullResetPlayer(){
+        player.teleport(map.getLobby());
+    }
 
 }
